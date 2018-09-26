@@ -1,0 +1,1 @@
+FROM hub.gee-whiz.de/build-env-template:latest

@@ -1,0 +1,10 @@
+@Library('jenkins-shared-library') _
+
+buildProjectSpecificDockerImage {
+    triggeredBy = '../build-env-template/master'
+    project = 'website'
+    ignoreRepos = [
+        'testing',
+        'old'
+    ]
+}

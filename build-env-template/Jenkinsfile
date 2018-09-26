@@ -1,0 +1,26 @@
+pipeline {
+    options {
+        ansiColor('xterm')
+        timestamps()
+        buildDiscarder(logRotator(numToKeepStr: '5'))
+        timeout(time: config.timeoutAfterHours, unit: 'HOURS')
+        disableConcurrentBuilds()
+    }
+
+    stages {
+        stage("Build and push Docker image") {
+            environment {
+                IMAGE_NAME = 'hub.gee-whiz.de/build-env-template'
+            }
+
+            steps {
+                withEnv(["PATH+DOCKER=${tool type: 'org.jenkinsci.plugins.docker.commons.tools.DockerTool', name: '17.09.1-ce'}/bin"]) {
+                    withDockerRegistry([credentialsId: config.dockerRegistryCredentialsIDForPush, url: "https://hub.gee-whiz.de"]) {
+                        sh 'docker build --no-cache --tag ${IMAGE_NAME}:latest .'
+                        sh 'docker push ${IMAGE_NAME}:latest'
+                    }
+                }
+            }
+        }
+    }
+}
